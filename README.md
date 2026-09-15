@@ -39,6 +39,7 @@ périmètre** de cette PoC.
 ## Prérequis
 
 - Node.js 24+
+- pnpm
 - Docker et Docker Compose (pour le lancement recommandé)
 
 ## Lancement (recommandé : Docker)
@@ -56,16 +57,11 @@ Une base PostgreSQL doit être disponible et renseignée dans `apps/api/.env`
 (voir `.env.example`).
 
 ```bash
-# API
-cd apps/api
-npm install
-npx prisma migrate dev
-npm run start:dev
+pnpm install
+cd apps/api && npx prisma migrate dev && cd ../..
 
-# Front (dans un second terminal)
-cd apps/web
-npm install
-npm run dev
+# Lance le front et l'API en parallèle, depuis la racine
+pnpm dev
 ```
 
 ## Utilisation
