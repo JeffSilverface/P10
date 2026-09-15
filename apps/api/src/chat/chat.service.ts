@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { SseConnectionService, ChatEvent } from './sse-connection.service';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 import { SendMessageDto } from './dto/send-message.dto';
-import { Message, SenderType } from '../../generated/prisma/client';
+import { ConversationStatus, Message, SenderType } from '../../generated/prisma/client';
 
 @Injectable()
 export class ChatService {
@@ -30,6 +30,21 @@ export class ChatService {
     return this.prisma.message.findMany({
       where: { conversationId },
       orderBy: { sentAt: 'asc' },
+    });
+  }
+
+  listConversations(status?: ConversationStatus) {
+    return this.prisma.conversation.findMany({
+      where: status ? { status } : undefined,
+      orderBy: { createdAt: 'desc' },
+      include: { messages: { orderBy: { sentAt: 'desc' }, take: 1 } },
+    });
+  }
+
+  getClientConversation(clientId: string) {
+    return this.prisma.conversation.findFirst({
+      where: { clientId, status: ConversationStatus.OPEN },
+      orderBy: { createdAt: 'desc' },
     });
   }
 

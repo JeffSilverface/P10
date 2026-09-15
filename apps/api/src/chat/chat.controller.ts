@@ -5,6 +5,7 @@ import {
   MessageEvent,
   Param,
   Post,
+  Query,
   Sse,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
@@ -12,6 +13,7 @@ import { ChatService } from './chat.service';
 import { SseConnectionService } from './sse-connection.service';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 import { SendMessageDto } from './dto/send-message.dto';
+import { ConversationStatus } from '../../generated/prisma/client';
 
 @Controller('chat')
 export class ChatController {
@@ -47,6 +49,16 @@ export class ChatController {
   @Post('conversations')
   createConversation(@Body() dto: CreateConversationDto) {
     return this.chatService.createConversation(dto);
+  }
+
+  @Get('conversations')
+  listConversations(@Query('status') status?: ConversationStatus) {
+    return this.chatService.listConversations(status);
+  }
+
+  @Get('conversations/client/:clientId')
+  getClientConversation(@Param('clientId') clientId: string) {
+    return this.chatService.getClientConversation(clientId);
   }
 
   @Get('conversations/:id/messages')
