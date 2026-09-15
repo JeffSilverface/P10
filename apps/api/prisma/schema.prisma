@@ -1,0 +1,40 @@
+// Prisma schema for the chat PoC.
+// Scope: chat only (Conversation, Message). See CLAUDE.md for context.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum SenderType {
+  CLIENT
+  SUPPORT
+}
+
+enum ConversationStatus {
+  OPEN
+  CLOSED
+}
+
+model Conversation {
+  id            String             @id @default(uuid())
+  clientId      String
+  reservationId String?
+  initiatedBy   SenderType
+  status        ConversationStatus @default(OPEN)
+  createdAt     DateTime           @default(now())
+  messages      Message[]
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  senderType     SenderType
+  content        String
+  sentAt         DateTime     @default(now())
+}
