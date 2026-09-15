@@ -16,7 +16,10 @@ export interface ChatEvent {
  */
 @Injectable()
 export class SseConnectionService {
-  private readonly clientStreams = new Map<string, Set<Subject<MessageEvent>>>();
+  private readonly clientStreams = new Map<
+    string,
+    Set<Subject<MessageEvent>>
+  >();
   private readonly supportStreams = new Set<Subject<MessageEvent>>();
 
   registerClient(clientId: string): Subject<MessageEvent> {
